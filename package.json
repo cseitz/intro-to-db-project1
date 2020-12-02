@@ -1,0 +1,32 @@
+{
+  "name": "intro-to-db-project1",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "serve": "cd app && npm run serve",
+    "build": "cd app && npm run build",
+    "start": "node index.js",
+    "start-vue": "node index.js vue",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cseitz/intro-to-db-project1.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cseitz/intro-to-db-project1/issues"
+  },
+  "homepage": "https://github.com/cseitz/intro-to-db-project1#readme",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "config": "^3.3.3",
+    "express": "^4.17.1",
+    "express-http-proxy": "^1.6.2",
+    "mysql": "^2.18.1",
+    "node-fetch": "^2.6.1"
+  }
+}
