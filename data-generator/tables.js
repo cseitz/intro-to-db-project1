@@ -108,7 +108,7 @@ global.PHYSICIANS = {
 };
 
 global.NURSES = {
-  table: 'NURSES',
+  table: 'nurses',
   keys: [
     'nurse_id',
     'employee_id',
