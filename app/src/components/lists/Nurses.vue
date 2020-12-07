@@ -8,8 +8,7 @@
       <div v-if="loaded">
         <a v-for="item in data" style="margin-bottom: 10px; text-decoration: none; display: block; color: inherit;"
         v-bind:href="'/database/nurse/' + item.nurse_id">
-          <h3 style="margin-bottom: 0px;">Dr. {{ item.last_name }}, {{ item.first_name }}</h3>
-          <p>{{ item.education }}</p>
+          <h3 style="margin-bottom: 0px;">{{ item.last_name }}, {{ item.first_name }}</h3>
           <p>{{ item.address }}</p>
         </a>
       </div>
