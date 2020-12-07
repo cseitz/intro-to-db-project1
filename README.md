@@ -1,3 +1,7 @@
+## Database Export
+
+[https://github.com/cseitz/intro-to-db-project1/blob/master/export.sql](https://github.com/cseitz/intro-to-db-project1/blob/master/export.sql)
+
 ## Installing
 
 Install Node.js and NPM
