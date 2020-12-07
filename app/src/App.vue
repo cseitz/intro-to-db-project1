@@ -27,4 +27,16 @@
     }
   }
 }
+
+input, button {
+  border: none;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 0.5em;
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}
 </style>

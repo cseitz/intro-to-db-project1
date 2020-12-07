@@ -46,10 +46,18 @@ router.post('/patients/:patient_id.json', $attempt(async (req, res) => {
   let changes = JSON.parse(req.body);
   let fields = Object.keys(changes);
   let values = Object.values(changes);
-  let args = values;
-  let query = `UPDATE patients SET ${fields.map(o => "" + req.$param(o).slice(0, -1).substr(1) + " = ?").join(',')} WHERE patient_id = ?`;
+  let args = [];
+  let query;
+  if (req.params.patient_id == 'create') {
+    query = `INSERT INTO patients (${fields.map(o => "\`" + req.$param(o).slice(0, -1).substr(1) + '\`').join(', ')})
+    VALUES (${values.map(o => '?').join(', ')})`;
+    args = values;
+  } else {
+    query = `UPDATE patients SET ${fields.map(o => "" + req.$param(o).slice(0, -1).substr(1) + " = ?").join(',')} WHERE patient_id = ?`;
+    args = values;
+    args.push(Number(req.params.patient_id));
+  }
   query = normalizeQuery(`${query} ${$filtering(req)}`);
-  args.push(Number(req.params.patient_id));
   console.log(query, args);
   return {
     results: (await db.query(query, args)).results,

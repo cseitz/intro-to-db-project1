@@ -1,6 +1,18 @@
 export default {
   methods: {
     async fetchData(url=false) {
+      if (this.id == 'create' && !url) {
+        this.query = false;
+        this.data = {
+
+        };
+        this._data = JSON.stringify(this.data);
+        this.loaded = true;
+        if ('afterFetch' in this) {
+          //await this.afterFetch();
+        }
+        return;
+      }
       let path = templateString(url || this.path, this);
       console.log(path);
       let resp = await (
@@ -40,6 +52,16 @@ export default {
         })
       ).json();
       (subject || this).saveResponse = resp;
+      if (resp.results && 'insertId' in resp.results) {
+        if (!('id' in this.$route.params)) {
+          this.$router.push({
+            name: 'Patient',
+            params: {
+              id: resp.results.insertId,
+            }
+          })
+        }
+      }
       await this.fetchData();
       return resp;
     },
