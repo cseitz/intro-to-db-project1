@@ -32,15 +32,19 @@ global.mysqlEscape = function(str) {
 
 global.$filtering = ((req) => {
   let str = [];
-  if (req.query.limit) {
-    str.push(`LIMIT ${mysqlEscape(req.query.limit)}`)
-    if (req.query.page) {
-      let n = Number(req.query.page) * Number(req.query.limit);
-      str.push(`OFFSET ${n}`)
+  if (!req.query.count) {
+    if (req.query.limit) {
+      str.push(`LIMIT ${mysqlEscape(req.query.limit)}`)
+      if (req.query.page) {
+        let n = Number(req.query.page) * Number(req.query.limit);
+        str.push(`OFFSET ${n}`)
+      }
     }
-  }
-  if (req.query.offset) {
-    str.push(`OFFSET ${mysqlEscape(req.query.offset)}`)
+    if (req.query.offset) {
+      str.push(`OFFSET ${mysqlEscape(req.query.offset)}`)
+    }
+  } else if (req.query.count) {
+    str.push('|COUNT');
   }
   return str.join(' ');
 });
@@ -64,7 +68,8 @@ global.$attempt = ((cb) => {
 
 router.use((req, res, next) => {
   req.$param = function(name) {
-    return db.connection.escape(req.params[name] ?? req.query[name]);
+
+    return db.connection.escape(req.params[name] ?? req.query[name] ?? name);
   };
   next();
 })
@@ -72,6 +77,11 @@ router.use((req, res, next) => {
 router.use(require('./routes'))
 
 global.normalizeQuery = function(str) {
+  if (str.indexOf('|COUNT') >= 0) {
+    str = str.split('|COUNT')[0];
+    //str = str.split('SELECT * ').join('SELECT COUNT(*) ');
+    str = `SELECT COUNT(*) FROM (${str}) AS counted`;
+  }
   return str.split('\n').join(' ').split('\t').join('').trim()
   .split('  ').join(' ')
   .split('  ').join(' ')

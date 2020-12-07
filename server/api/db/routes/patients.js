@@ -41,6 +41,22 @@ router.get('/patients/:patient_id.json', $attempt(async (req, res) => {
   }
 }))
 
+// Update specific patient by id
+router.post('/patients/:patient_id.json', $attempt(async (req, res) => {
+  let changes = JSON.parse(req.body);
+  let fields = Object.keys(changes);
+  let values = Object.values(changes);
+  let args = values;
+  let query = `UPDATE patients SET ${fields.map(o => "" + req.$param(o).slice(0, -1).substr(1) + " = ?").join(',')} WHERE patient_id = ?`;
+  query = normalizeQuery(`${query} ${$filtering(req)}`);
+  args.push(Number(req.params.patient_id));
+  console.log(query, args);
+  return {
+    results: (await db.query(query, args)).results,
+    query,
+  }
+}))
+
 
 // Get specific patient's physician
 router.get('/patients/:patient_id/physician.json', $attempt(async (req, res) => {
@@ -54,6 +70,16 @@ router.get('/patients/:patient_id/physician.json', $attempt(async (req, res) => 
     results: (await db.query(query, [
       Number(patient.physician_id)
     ])).results.shift(),
+    query,
+  }
+}))
+
+// Get specific patient by id
+router.get('/patients/:patient_id/records.json', $attempt(async (req, res) => {
+  let query = `SELECT * FROM records WHERE patient_id = ${req.$param('patient_id')}`;
+  query = normalizeQuery(`${query} ${$filtering(req)}`);
+  return {
+    results: (await db.query(query)).results,
     query,
   }
 }))

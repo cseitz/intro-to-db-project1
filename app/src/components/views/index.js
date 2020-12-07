@@ -20,7 +20,29 @@ export default {
     },
     reset() {
       this.data = JSON.parse(this._data);
-    }
+    },
+    async saveData(url=false, subject=false) {
+      subject = (subject || this);
+      let path = templateString(url || this.path, subject || this);
+      let original = JSON.parse(subject._data);
+      let diff = Object.fromEntries(Object.entries(subject.data).filter(o => {
+        return o[1] != original[o[0]];
+      }));
+      console.log(diff);
+      console.log(JSON.stringify(this.data));
+      let resp = await (
+        await fetch(path, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(diff)
+        })
+      ).json();
+      (subject || this).saveResponse = resp;
+      await this.fetchData();
+      return resp;
+    },
   },
   computed: {
     modified() {

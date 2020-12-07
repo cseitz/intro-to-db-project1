@@ -2,11 +2,22 @@ export default {
   methods: {
     async fetchData(url=false) {
       if (!url) {
+        if (!this.loaded && this.search.length <= 1 && this.$route.query.search) {
+          this.search = decodeURIComponent(this.$route.query.search);
+        }
         if (this.search.length <= 1 && !('allowEmpty' in this)) {
+          this.$router.push({
+            query: {
+              search: undefined,
+            }
+          })
           this.data = [];
           this._data = JSON.stringify([]);
           this.loaded = false;
           this.query = false;
+          if ('afterFetch' in this) {
+            await this.afterFetch();
+          }
           return;
         }
       }
@@ -15,6 +26,11 @@ export default {
         await fetch(path)
       ).json();
       if (!url) {
+        this.$router.push({
+          query: {
+            search: encodeURIComponent(this.search),
+          }
+        })
         this.query = resp.query;
         this.data = resp.results;
         this._data = JSON.stringify(resp.results);

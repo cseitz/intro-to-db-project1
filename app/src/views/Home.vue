@@ -1,8 +1,17 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-    <PatientView id="1"/>
+
+    <router-link to="/database/hospitals">Hospital Database</router-link>
+    <br><br>
+    <router-link to="/database/patients">Patient Database</router-link>
+    <br><br>
+    <router-link to="/database/physicians">Physician Database</router-link>
+    <br><br>
+    <router-link to="/database/nurses">Nurse Database</router-link>
+
+    <br><br><br><br>
+
+    We ran out of time and weren't able to do all the things we wanted to.
 
   </div>
 </template>

@@ -5,9 +5,22 @@ module.exports = router;
 // Get all hospitals in the database
 router.get('/hospitals.json', $attempt(async (req, res) => {
   let query = `SELECT * FROM hospitals`;
+  let args = [];
+  if (req.query.search) {
+    query = `${query} WHERE (
+      name LIKE ?
+        OR
+      address LIKE ?
+        OR
+      capabilities LIKE ?
+    )`;
+    for (let i = 0; i < 3; i++) {
+      args.push(req.query.search);
+    }
+  }
   query = normalizeQuery(`${query} ${$filtering(req)}`);
   return {
-    results: (await db.query(query)).results,
+    results: (await db.query(query, args)).results,
     query,
   }
 }))

@@ -31,10 +31,16 @@
 
 
       <br><br>
-      <button v-bind:disabled="!modified" style="text-align: center;">Save Changes</button>
+      <button v-bind:disabled="!modified" style="text-align: center;" v-on:click="updatePatient">Save Changes</button>
       <br>
       <div v-if="modified" v-on:click="reset" style="cursor: pointer;">Undo Edits</div>
       <div v-else style="opacity: 0;">No changes made</div>
+
+      <h3>{{ records.length }} Patient Records</h3>
+      <button>Import Record</button>
+      <br><br>
+      {{ records }}
+
     </div>
   </div>
 </template>
@@ -52,10 +58,12 @@ export default {
     return {
       table: 'patients',
       path: '/api/db/patients/${this.id}.json',
+      recordsPath: '/api/db/patients/${this.id}/records.json',
       data: {},
       loaded: false,
       query: false,
       physician: false,
+      records: [],
     }
   },
   methods: {
@@ -72,8 +80,12 @@ export default {
       }
       return this.physician;
     },
+    async updatePatient() {
+      return await this.saveData();
+    },
     async afterFetch() {
       await this.getPhysician();
+      this.records = (await this.fetchData(this.recordsPath)).results;
       //console.log(this.physician);
     }
   },
