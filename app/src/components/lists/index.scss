@@ -1,0 +1,26 @@
+.queryDisplay {
+  background-color: rgba(0, 0, 0, 0.15);
+  padding: 10px;
+  border-radius: 1em;
+}
+
+input, button {
+  border: none;
+  padding: 10px;
+  margin: 5px;
+  border-radius: 0.5em;
+  background-color: rgba(0, 0, 0, 0.15);
+}
+
+button:not(:disabled) {
+  cursor: pointer;
+}
+
+.field {
+  padding-left: 10px;
+  float: left;
+}
+
+.view {
+  padding: 10px;
+}

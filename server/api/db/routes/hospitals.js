@@ -2,83 +2,6 @@ let express = require('express');
 let router = express();
 module.exports = router;
 
-global.mysqlEscape = function(str) {
-    if (typeof str != 'string')
-        return str;
-
-    return str.replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, function (char) {
-        switch (char) {
-            case "\0":
-                return "\\0";
-            case "\x08":
-                return "\\b";
-            case "\x09":
-                return "\\t";
-            case "\x1a":
-                return "\\z";
-            case "\n":
-                return "\\n";
-            case "\r":
-                return "\\r";
-            case "\"":
-            case "'":
-            case "\\":
-            case "%":
-                return "\\"+char; // prepends a backslash to backslash, percent,
-                                  // and double/single quotes
-        }
-    });
-}
-
-global.$filtering = ((req) => {
-  let str = [];
-  if (req.query.limit) {
-    str.push(`LIMIT ${mysqlEscape(req.query.limit)}`)
-    if (req.query.page) {
-      let n = Number(req.query.page) * Number(req.query.limit);
-      str.push(`OFFSET ${n}`)
-    }
-  }
-  if (req.query.offset) {
-    str.push(`OFFSET ${mysqlEscape(req.query.offset)}`)
-  }
-  return str.join(' ');
-});
-
-global.$attempt = ((cb) => {
-  return (async (req, res, next) => {
-    try {
-      /*res.json({
-        success: true,
-        ...(await cb(req, res, next))
-      });*/
-      res.json((await cb(req, res, next)));
-    } catch(e) {
-      res.json({
-        success: false,
-        error: e.toString()
-      })
-    }
-  })
-});
-
-router.use((req, res, next) => {
-  req.$param = function(name) {
-    return db.connection.escape(req.params[name] ?? req.query[name]);
-  };
-  next();
-})
-
-router.use(require('./routes'))
-
-global.normalizeQuery = function(str) {
-  return str.split('\n').join(' ').split('\t').join('').trim()
-  .split('  ').join(' ')
-  .split('  ').join(' ')
-  .split('  ').join(' ');
-}
-
-if (false) {
 // Get all hospitals in the database
 router.get('/hospitals.json', $attempt(async (req, res) => {
   let query = `SELECT * FROM hospitals`;
@@ -173,25 +96,3 @@ router.get('/hospitals/:hospital_id/nurses/:nurse_id.json', $attempt(async (req,
     query,
   }
 }))
-
-
-// Get all patients in the database
-router.get('/patients.json', $attempt(async (req, res) => {
-  let query = `SELECT * FROM patients`;
-  query = normalizeQuery(`${query} ${$filtering(req)}`);
-  return {
-    results: (await db.query(query)).results,
-    query,
-  }
-}))
-
-// Get specific patient by id
-router.get('/patients/:patient_id.json', $attempt(async (req, res) => {
-  let query = `SELECT * FROM patients WHERE patient_id = ${req.$param('patient_id')}`;
-  query = normalizeQuery(`${query} ${$filtering(req)}`);
-  return {
-    results: (await db.query(query)).results.shift(),
-    query,
-  }
-}))
-}
