@@ -15,7 +15,7 @@ if (process.argv.slice(2, 3).pop() == 'vue') {
 }
 
 
-let server = app.listen(8080);
+let server = app.listen(require('os').hostname().indexOf('ubuntu') >= 0 ? 9258 : 8080);
 /*let opened = true;
 let gracefulClose = (() => {
   if (opened) {
