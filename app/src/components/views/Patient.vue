@@ -2,7 +2,7 @@
   <div class="patient-view view" style="width: 460px; margin-left: auto; margin-right: auto;">
     <div v-if="loaded" style="float: left;" v-bind:style="{ 'opacity': (confirmingAction || selectingPhysician) ? '0' : '1', }">
       <input v-model="data.first_name" style="width: 200px" placeholder="First Name">
-      <input v-model="data.last_name" style="width: 200px" placeholder="First Name">
+      <input v-model="data.last_name" style="width: 200px" placeholder="Last Name">
       <br>
       <input v-model="data.address" style="width: 430px" placeholder="Address">
       <br>
@@ -79,7 +79,9 @@ export default {
       table: 'patients',
       path: '/api/db/patients/${this.id}.json',
       recordsPath: '/api/db/patients/${this.id}/records.json',
-      data: {},
+      data: {
+
+      },
       loaded: false,
       query: false,
       physician: false,
