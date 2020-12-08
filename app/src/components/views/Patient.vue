@@ -36,10 +36,11 @@
       <div v-else style="opacity: 0;">No changes made</div>
 
       <h3>{{ records.length }} Patient Records</h3>
-      <button>Import Record</button>
+      <button v-on:click="importRecord">Import Record</button>
       <br><br>
       <span>
-        <RecordView v-for="record in records" v-bind:id="record.record_id"/>
+        <RecordView v-if="importingRecord" id="create" v-bind:patient="data.patient_id"/>
+        <RecordView v-for="record in records" v-bind:id="record.record_id" v-bind:patient="data.patient_id"/>
       </span>
 
       <teleport to="#app" >
@@ -85,6 +86,8 @@ export default {
 
       selectingPhysician: false,
       selectingRoom: false,
+
+      importingRecord: false,
 
       confirmingAction: false,
     }
@@ -135,6 +138,10 @@ export default {
         this.physician = false;
         this.getPhysician();
       }
+    },
+
+    importRecord() {
+      this.importingRecord = !this.importingRecord;
     },
 
     deletePatient() {

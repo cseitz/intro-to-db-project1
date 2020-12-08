@@ -43,6 +43,9 @@ export default {
       let diff = Object.fromEntries(Object.entries(subject.data).filter(o => {
         return o[1] != original[o[0]];
       }));
+      if (subject.id == 'create') {
+        diff = subject.data;
+      }
       console.log(diff);
       console.log(JSON.stringify(this.data));
       let resp = await (

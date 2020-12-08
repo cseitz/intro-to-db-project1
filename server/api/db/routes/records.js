@@ -34,13 +34,13 @@ router.post('/records/:record_id.json', $attempt(async (req, res) => {
     args = values;
     args.push(Number(req.params.record_id));
   }
-  if (true) {
+  /*if (true) {
     console.log(query);
     return {
       results: [],
       query,
     }
-  }
+  }*/
   query = normalizeQuery(`${query} ${$filtering(req)}`);
   return {
     results: (await db.query(query, args)).results,

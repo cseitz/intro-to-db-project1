@@ -35,3 +35,12 @@ button:not(:disabled) {
   background-color: white;
   left: 0px;
 }
+
+.record-view {
+  .record-content {
+    background-color: rgba(0, 0, 0, 0.05);
+    border-radius: 0.5em;
+    padding: 10px;
+    margin: 20px;
+  }
+}

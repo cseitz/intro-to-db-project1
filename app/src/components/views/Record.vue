@@ -1,10 +1,40 @@
 <template>
   <div class="record-view view" style="width: 460px; margin-left: auto; margin-right: auto;">
-    <div v-if="loaded" style="float: left;">
-      <input v-model="data.entity" style="width: 200px" placeholder="Entity">
-      <input v-model="data.title" style="width: 200px" placeholder="Title">
+    <div v-if="loaded && (editing || id == 'create')" class="record-content" style="">
+      <!--<input v-model="data.entity" style="width: 200px" placeholder="Entity">
+      <input v-model="data.title" style="width: 200px" placeholder="Title">-->
 
+      <span class="field">Entity (Hospital or Individual):</span>
+      <br>
+      <input v-model="data.entity" style="width: 370px" placeholder="None">
+      <br>
+      <span class="field">Title:</span>
+      <br>
+      <input v-model="data.title" style="width: 370px" placeholder="None">
+      <br>
+      <span class="field">Description:</span>
+      <br>
+      <input v-model="data.description" style="width: 370px" placeholder="None">
 
+      <span v-if="data.timestamp">{{ (new Date(data.timestamp)).toLocaleString() }}</span>
+
+      <span v-if="modified">
+        <br><br>
+        <button v-bind:disabled="!modified" style="text-align: center;" v-on:click="updateRecord">Save Changes</button>
+        <br>
+        <div v-if="modified" v-on:click="reset" style="cursor: pointer;">Undo Edits</div>
+        <div v-else style="opacity: 0;">No changes made</div>
+      </span>
+
+      <br>
+
+    </div>
+    <div v-else-if="loaded" class="record-content" style="">
+      <h3>{{ data.title }}</h3>
+      <h4>{{ data.entity }}</h4>
+      <p>{{ data.description }}</p>
+      <span v-if="data.timestamp">{{ (new Date(data.timestamp)).toLocaleString() }}</span>
+      <br>
     </div>
   </div>
 </template>
@@ -17,12 +47,12 @@ export default {
   name: 'RecordView',
   props: {
     id: String,
+    'patient': Number,
   },
   data() {
     return {
       table: 'records',
       path: '/api/db/records/${this.id}.json',
-      recordsPath: '/api/db/records/${this.id}/records.json',
       data: {},
       loaded: false,
       query: false,
@@ -33,54 +63,35 @@ export default {
       selectingRoom: false,
 
       confirmingAction: false,
+
+      editing: false,
     }
   },
   methods: {
-    async getPhysician() {
-      if (this.physician) {
-        if (this.physician.physician_id === this.data.physician_id) {
-          return this.physician;
-        }
-      };
-      if (this.data.physician_id) {
-        this.physician = (await this.fetchData(`/api/db/physicians/${this.data.physician_id}.json`)).results;
-      } else {
-        this.physician = false;
-      }
-      return this.physician;
-    },
     async updateRecord() {
-      return await this.saveData();
+      this.data.patient_id = this.data.patient_id || this.patient;
+      let resp = await this.saveData();
+      try {
+        if (this.id == 'create') {
+          this.$parent.importingRecord = false;
+        }
+        this.$parent.afterFetch();
+      } catch(e) {
+
+      }
+      return resp;
     },
     async afterFetch() {
-      await this.getPhysician();
-      this.records = (await this.fetchData(this.recordsPath)).results;
       //console.log(this.physician);
     },
     async afterReset() {
-      this.physician = false;
-      await this.getPhysician();
+
     },
     async afterDelete() {
       this.loaded = false;
       this.$router.push({
         name: 'Records',
       })
-    },
-
-    selectPhysician() {
-      this.selectingPhysician = true;
-    },
-    setPhysician(e) {
-      //console.log('got physician with event', e);
-      //console.log(e.dataset.id);
-      let physId = e.dataset.id;
-      this.selectingPhysician = false;
-      if (physId != undefined) {
-        this.data.physician_id = physId;
-        this.physician = false;
-        this.getPhysician();
-      }
     },
 
     deleteRecord() {
@@ -106,7 +117,6 @@ export default {
     }
   },
   components: {
-    PhysiciansList,
 
   },
 }
