@@ -1,4 +1,9 @@
 export default {
+  props: {
+    selectable: {
+      type: Function,
+    }
+  },
   methods: {
     async fetchData(url=false) {
       if (!url) {
@@ -6,11 +11,13 @@ export default {
           this.search = decodeURIComponent(this.$route.query.search);
         }
         if (this.search.length <= 1 && !('allowEmpty' in this)) {
-          this.$router.push({
-            query: {
-              search: undefined,
-            }
-          })
+          if (!this.selectable) {
+            this.$router.push({
+              query: {
+                search: undefined,
+              }
+            })
+          }
           this.data = [];
           this._data = JSON.stringify([]);
           this.loaded = false;
@@ -26,11 +33,13 @@ export default {
         await fetch(path)
       ).json();
       if (!url) {
-        this.$router.push({
-          query: {
-            search: encodeURIComponent(this.search),
-          }
-        })
+        if (!this.selectable) {
+          this.$router.push({
+            query: {
+              search: encodeURIComponent(this.search),
+            }
+          })
+        }
         this.query = resp.query;
         this.data = resp.results;
         this._data = JSON.stringify(resp.results);
@@ -44,6 +53,19 @@ export default {
     },
     reset() {
       this.data = JSON.parse(this._data);
+    },
+    itemSelected(e) {
+      if (this.selectable) {
+        e.preventDefault();
+        let root = false;
+        for (let x of e.path) {
+          if ('id' in x.dataset) {
+            root = x;
+            break;
+          }
+        }
+        this.selectable(root || e.target);
+      }
     }
   },
   computed: {

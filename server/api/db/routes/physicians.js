@@ -36,7 +36,7 @@ router.get('/physicians.json', $attempt(async (req, res) => {
 router.get('/physicians/:physician_id.json', $attempt(async (req, res) => {
   let query = `SELECT physicians.*, employees.first_name, employees.last_name, employees.address FROM physicians
     LEFT JOIN employees ON physicians.employee_id = employees.employee_id
-    WHERE physicians.employee_id = ?`;
+    WHERE physicians.physician_id = ?`;
   query = normalizeQuery(`${query} ${$filtering(req)}`);
   return {
     results: (await db.query(query, [

@@ -41,10 +41,15 @@ process.on('SIGTERM', gracefulClose);
 process.on('SIGINT', gracefulClose);
 */
 
+let logging = true;
+
 let db = {
   connection,
   query(...args) {
     return new Promise((resolve, reject) => {
+      if (logging) {
+        console.log('QUERY', args);
+      };
       connection.query(...args, function(err, results, fields) {
         if (err) {
           reject(err);

@@ -24,10 +24,8 @@
 
       <br><br>
 
-      <button>Assign Physician</button>
-      <button>Assign Room</button>
-
-      <input v-model="data.physician_id">
+      <button v-on:click="selectPhysician">Assign Physician</button>
+      <!--<button v-on:click="selectPhysician">Assign Room</button>-->
 
 
       <br><br>
@@ -41,12 +39,19 @@
       <br><br>
       {{ records }}
 
+      <teleport to="#app" >
+          <div class="nestedSelect" v-if="selectingPhysician">
+            <PhysiciansList :selectable="setPhysician"/>
+          </div>
+      </teleport>
+
     </div>
   </div>
 </template>
 
 <script>
 import ViewBase from './';
+import PhysiciansList from '@/components/lists/Physicians.vue'
 
 export default {
   extends: ViewBase,
@@ -64,6 +69,9 @@ export default {
       query: false,
       physician: false,
       records: [],
+
+      selectingPhysician: false,
+      selectingRoom: false,
     }
   },
   methods: {
@@ -87,9 +95,29 @@ export default {
       await this.getPhysician();
       this.records = (await this.fetchData(this.recordsPath)).results;
       //console.log(this.physician);
+    },
+    async afterReset() {
+      this.physician = false;
+      await this.getPhysician();
+    },
+
+    selectPhysician() {
+      this.selectingPhysician = true;
+    },
+    setPhysician(e) {
+      //console.log('got physician with event', e);
+      //console.log(e.dataset.id);
+      let physId = e.dataset.id;
+      this.selectingPhysician = false;
+      if (physId != undefined) {
+        this.data.physician_id = physId;
+        this.physician = false;
+        this.getPhysician();
+      }
     }
   },
   components: {
+    PhysiciansList,
 
   },
 }

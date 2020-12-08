@@ -44,8 +44,16 @@ router.get('/patients/:patient_id.json', $attempt(async (req, res) => {
 // Update specific patient by id
 router.post('/patients/:patient_id.json', $attempt(async (req, res) => {
   let changes = JSON.parse(req.body);
+  if ('patient_id' in changes) {
+    delete changes.patient_id;
+  }
   let fields = Object.keys(changes);
   let values = Object.values(changes);
+  if ('physician_id' in changes) {
+    if (changes.physician_id == '0') {
+      values[fields.indexOf('physician_id')] = null;
+    }
+  }
   let args = [];
   let query;
   if (req.params.patient_id == 'create') {
@@ -58,7 +66,6 @@ router.post('/patients/:patient_id.json', $attempt(async (req, res) => {
     args.push(Number(req.params.patient_id));
   }
   query = normalizeQuery(`${query} ${$filtering(req)}`);
-  console.log(query, args);
   return {
     results: (await db.query(query, args)).results,
     query,

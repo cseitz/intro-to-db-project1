@@ -32,6 +32,9 @@ export default {
     },
     reset() {
       this.data = JSON.parse(this._data);
+      if ('afterReset' in this) {
+        this.afterReset();
+      }
     },
     async saveData(url=false, subject=false) {
       subject = (subject || this);

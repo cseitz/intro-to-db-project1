@@ -24,3 +24,14 @@ button:not(:disabled) {
 .view {
   padding: 10px;
 }
+
+.nestedSelect {
+  position: fixed;
+  top: 10vh;
+  height: 90vh;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100vw;
+  background-color: white;
+  left: 0px;
+}
