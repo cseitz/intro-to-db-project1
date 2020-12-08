@@ -61,9 +61,9 @@ CREATE TABLE `records` (
   `timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
   `entity` text NOT NULL,
   `title` text NOT NULL,
-  `description` text NOT NULL,
-  `info` json NOT NULL,
-  `attachments` text NOT NULL
+  `description` text NULL,
+  `info` json NULL,
+  `attachments` text NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `rooms` (
