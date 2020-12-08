@@ -103,7 +103,7 @@ router.get('/patients/:patient_id/physician.json', $attempt(async (req, res) => 
 // Get specific patient by id
 router.get('/patients/:patient_id/records.json', $attempt(async (req, res) => {
   let query = `SELECT * FROM records WHERE patient_id = ${req.$param('patient_id')}
-  ORDER BY timestamp ASC`;
+  ORDER BY timestamp DESC`;
   query = normalizeQuery(`${query} ${$filtering(req)}`);
   return {
     results: (await db.query(query)).results,

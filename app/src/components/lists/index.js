@@ -33,7 +33,7 @@ export default {
         await fetch(path)
       ).json();
       if (!url) {
-        if (!this.selectable) {
+        if (!this.selectable && this.search.length) {
           this.$router.push({
             query: {
               search: encodeURIComponent(this.search),

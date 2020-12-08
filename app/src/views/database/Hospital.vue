@@ -1,5 +1,8 @@
 <template>
   <div class="hospital">
+
+    <a v-bind:href="'/database/hospital/' + $route.params.id + '/departments'">Departments for this Hospital</a>
+
     <h2>Patients:</h2>
     <PatientsList v-bind:hospital_id="$route.params.id"/>
 

@@ -1,6 +1,6 @@
 <template>
   <div class="patient-view view" style="width: 460px; margin-left: auto; margin-right: auto;">
-    <div v-if="loaded" style="float: left;">
+    <div v-if="loaded" style="float: left;" v-bind:style="{ 'opacity': (confirmingAction || selectingPhysician) ? '0' : '1', }">
       <input v-model="data.first_name" style="width: 200px" placeholder="First Name">
       <input v-model="data.last_name" style="width: 200px" placeholder="First Name">
       <br>
@@ -19,7 +19,7 @@
 
       <div v-if="data.physician_id && physician">
         Physician:
-        <a v-bind:href="'/physician/' + data.physician_id">Dr. {{ physician.first_name }} {{ physician.last_name }}</a>
+        <a v-bind:href="'/database/physician/' + data.physician_id">Dr. {{ physician.first_name }} {{ physician.last_name }}</a>
       </div>
 
       <br><br>
@@ -38,10 +38,11 @@
       <h3>{{ records.length }} Patient Records</h3>
       <button v-on:click="importRecord">Import Record</button>
       <br><br>
-      <span>
+      <div>
         <RecordView v-if="importingRecord" id="create" v-bind:patient="data.patient_id"/>
-        <RecordView v-for="record in records" v-bind:id="record.record_id" v-bind:patient="data.patient_id"/>
-      </span>
+        <br>
+        <RecordView v-if="records" v-for="(record, index) in records" v-bind:key="index" v-bind:id="record.record_id" v-bind:patient="data.patient_id"/>
+      </div>
 
       <teleport to="#app" >
           <div class="nestedSelect" v-if="selectingPhysician">
@@ -109,9 +110,13 @@ export default {
     async updatePatient() {
       return await this.saveData();
     },
-    async afterFetch() {
-      await this.getPhysician();
+    async fetchRecords() {
       this.records = (await this.fetchData(this.recordsPath)).results;
+    },
+    async afterFetch() {
+      await this.fetchRecords();
+      await this.getPhysician();
+
       //console.log(this.physician);
     },
     async afterReset() {

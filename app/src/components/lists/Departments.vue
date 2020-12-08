@@ -1,8 +1,9 @@
 <template>
   <div class="departments-list list" style="width: 460px; margin-left: auto; margin-right: auto;">
     <div style="">
-      Search:<br>
-      <input v-model="search" style="width: 400px" v-on:input="runSearch">
+      <h1>Departments:</h1>
+      <!--Search:<br>
+      <input v-model="search" style="width: 400px" v-on:input="runSearch">-->
       <!-- <button v-on:click="runSearch" style="width: calc(100px - 15px)">Search</button> -->
       <br><br>
       <div v-if="loaded">

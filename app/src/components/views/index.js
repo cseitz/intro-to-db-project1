@@ -1,30 +1,31 @@
 export default {
   methods: {
-    async fetchData(url=false) {
-      if (this.id == 'create' && !url) {
-        this.query = false;
-        this.data = {
+    async fetchData(url=false, subject_=false) {
+      let subject = subject_ || this;
+      if (subject.id == 'create' && !url) {
+        subject.query = false;
+        subject.data = {
 
         };
-        this._data = JSON.stringify(this.data);
-        this.loaded = true;
-        if ('afterFetch' in this) {
+        subject._data = JSON.stringify(this.data);
+        subject.loaded = true;
+        if ('afterFetch' in subject) {
           //await this.afterFetch();
         }
         return;
       }
-      let path = templateString(url || this.path, this);
-      console.log(path);
+      let path = templateString(url || subject.path, subject);
+      //console.log(path);
       let resp = await (
         await fetch(path)
       ).json();
       if (!url) {
-        this.query = resp.query;
-        this.data = resp.results;
-        this._data = JSON.stringify(resp.results);
-        this.loaded = true;
-        if ('afterFetch' in this) {
-          await this.afterFetch();
+        subject.query = resp.query;
+        subject.data = resp.results;
+        subject._data = JSON.stringify(resp.results);
+        subject.loaded = true;
+        if ('afterFetch' in subject) {
+          await subject.afterFetch();
         }
       } else {
         return resp;

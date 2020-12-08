@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
+import NotImplemented from '../views/NotImplemented.vue'
 
 const routes = [
   {
@@ -78,6 +79,30 @@ const routes = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/database/Nurses.vue')
+  },
+  {
+    path: '/database/physician/:id',
+    name: 'Physician',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: NotImplemented,
+  },
+  {
+    path: '/database/nurse/:id',
+    name: 'Nurse',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: NotImplemented,
+  },
+  {
+    path: '/database/department/:id',
+    name: 'Department',
+    // route level code-splitting
+    // this generates a separate chunk (about.[hash].js) for this route
+    // which is lazy-loaded when the route is visited.
+    component: NotImplemented,
   },
 ]
 
