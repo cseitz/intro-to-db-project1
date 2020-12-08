@@ -25,6 +25,7 @@
       <br><br>
 
       <button v-on:click="selectPhysician">Assign Physician</button>
+      <button v-on:click="deletePatient">Delete Patient</button>
       <!--<button v-on:click="selectPhysician">Assign Room</button>-->
 
 
@@ -37,11 +38,22 @@
       <h3>{{ records.length }} Patient Records</h3>
       <button>Import Record</button>
       <br><br>
-      {{ records }}
+      <span>
+        <RecordView v-for="record in records" v-bind:id="record.record_id"/>
+      </span>
 
       <teleport to="#app" >
           <div class="nestedSelect" v-if="selectingPhysician">
             <PhysiciansList :selectable="setPhysician"/>
+          </div>
+      </teleport>
+
+      <teleport to="#app" >
+          <div class="nestedSelect" v-if="confirmingAction">
+            <h3>{{ requestedAction }}</h3>
+            <p>This cannot be undone. Are you sure you want to proceed?</p>
+            <button v-on:click="confirmedAction">Confirm</button>
+            <button v-on:click="canceledAction" style="background-color: transparent;">Cancel</button>
           </div>
       </teleport>
 
@@ -52,6 +64,7 @@
 <script>
 import ViewBase from './';
 import PhysiciansList from '@/components/lists/Physicians.vue'
+import RecordView from './Record.vue';
 
 export default {
   extends: ViewBase,
@@ -72,6 +85,8 @@ export default {
 
       selectingPhysician: false,
       selectingRoom: false,
+
+      confirmingAction: false,
     }
   },
   methods: {
@@ -100,6 +115,12 @@ export default {
       this.physician = false;
       await this.getPhysician();
     },
+    async afterDelete() {
+      this.loaded = false;
+      this.$router.push({
+        name: 'Patients',
+      })
+    },
 
     selectPhysician() {
       this.selectingPhysician = true;
@@ -114,10 +135,33 @@ export default {
         this.physician = false;
         this.getPhysician();
       }
+    },
+
+    deletePatient() {
+      let _this = this;
+      this.confirmAction(`Are you sure you want to delete patient '${this.data.first_name} ${this.data.last_name}'?`, function() {
+        _this.deleteData(true);
+      });
+    },
+
+    confirmAction(str, cb) {
+      let _this = this;
+      this.requestedAction = str;
+      this.confirmingAction = true;
+      this.confirmedAction = function() {
+        _this.confirmingAction = false;
+        cb(_this);
+      };
+    },
+    canceledAction() {
+      this.confirmingAction = false;
+      delete this.requestedAction;
+      delete this.confirmedAction;
     }
   },
   components: {
     PhysiciansList,
+    RecordView,
 
   },
 }

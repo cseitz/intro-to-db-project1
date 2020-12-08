@@ -73,6 +73,17 @@ router.post('/patients/:patient_id.json', $attempt(async (req, res) => {
 }))
 
 
+// Delete specific patient by id
+router.delete('/patients/:patient_id.json', $attempt(async (req, res) => {
+  let query = `DELETE FROM patients WHERE patient_id = ? LIMIT 1`;
+  query = normalizeQuery(`${query} ${$filtering(req)}`);
+  return {
+    results: (await db.query(query, [req.params.patient_id])).results,
+    query,
+  }
+}))
+
+
 // Get specific patient's physician
 router.get('/patients/:patient_id/physician.json', $attempt(async (req, res) => {
   let patient = (await db.query(`SELECT * FROM patients WHERE patient_id = ${req.$param('patient_id')}`)).results.shift();

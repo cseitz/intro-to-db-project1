@@ -68,6 +68,19 @@ export default {
       await this.fetchData();
       return resp;
     },
+    async deleteData(confirmed=false) {
+      if (confirmed === true) {
+        let path = templateString(this.path, this);
+        let resp = await (
+          await fetch(path, {
+            method: 'DELETE',
+          })
+        ).json();
+        if ('afterDelete' in this) {
+          this.afterDelete();
+        }
+      }
+    }
   },
   computed: {
     modified() {
