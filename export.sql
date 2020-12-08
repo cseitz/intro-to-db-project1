@@ -41,8 +41,8 @@ CREATE TABLE `patients` (
   `address` text NOT NULL,
   `medication` text NULL,
   `conditions` text NULL,
-  `insurance` json NOT NULL,
-  `status` json NOT NULL
+  `insurance` json NULL,
+  `status` json NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 CREATE TABLE `physicians` (
