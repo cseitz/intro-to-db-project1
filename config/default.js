@@ -1,3 +1,5 @@
+
+
 module.exports = {
   db: {
     connection: {
@@ -8,3 +10,7 @@ module.exports = {
     }
   }
 }
+
+if (require('fs').existsSync(__dirname + '/prod.js')) {
+  module.exports = require(__dirname + '/prod.js');
+};
